@@ -159,6 +159,10 @@
   }
 }
 
+html, body {
+  font-family: "Tajawal", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
 @theme inline {
   --color-primary-light: var(--primary-light);
   --color-primary-dark: var(--primary-dark);
