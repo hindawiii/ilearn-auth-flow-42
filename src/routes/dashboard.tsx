@@ -77,12 +77,13 @@ const LEADERBOARD = [
 function Dashboard() {
   const [collapsed, setCollapsed] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [activityFilter, setActivityFilter] = useState("all");
   const { isDark, toggle } = useTheme();
 
   return (
     <div className="min-h-screen bg-background flex w-full">
-      {/* ============ SIDEBAR ============ */}
+      {/* ============ SIDEBAR (desktop) ============ */}
       <aside
         className={`${collapsed ? "w-20" : "w-72"} hidden lg:flex flex-col bg-card border-l border-border transition-all duration-300 sticky top-0 h-screen`}
       >
@@ -149,11 +150,41 @@ function Dashboard() {
         </div>
       </aside>
 
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute end-0 top-0 h-full w-72 bg-card border-s border-border flex flex-col animate-ilearn-slide-up">
+            <div className="p-5 border-b border-border flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "var(--gradient-primary)" }}>
+                <GraduationCap className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-extrabold bg-clip-text text-transparent" style={{ backgroundImage: "var(--gradient-primary)" }}>iLearn</span>
+              <button onClick={() => setMobileOpen(false)} className="ms-auto text-muted-foreground"><X className="w-5 h-5" /></button>
+            </div>
+            <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+              {MAIN_NAV.map((item) => <NavButton key={item.label} item={item} collapsed={false} />)}
+              <div className="px-3 pt-4 pb-2 text-[11px] font-bold text-muted-foreground uppercase">الأقسام</div>
+              {SECTIONS_NAV.map((item) => <NavButton key={item.label} item={item} collapsed={false} />)}
+              <div className="px-3 pt-4 pb-2 text-[11px] font-bold text-muted-foreground uppercase">المجتمع</div>
+              {COMMUNITY_NAV.map((item) => <NavButton key={item.label} item={item} collapsed={false} />)}
+            </nav>
+          </aside>
+        </div>
+      )}
+
       {/* ============ MAIN ============ */}
       <main className="flex-1 min-w-0 flex flex-col">
         {/* Top bar */}
         <header className="sticky top-0 z-20 bg-background/85 backdrop-blur-md border-b border-border">
           <div className="flex items-center gap-3 px-4 md:px-8 h-20">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="lg:hidden h-11 w-11 rounded-xl bg-card border border-border flex items-center justify-center text-foreground"
+              aria-label="القائمة"
+            >
+              <LayoutDashboard className="w-5 h-5" />
+            </button>
             <div className="min-w-0">
               <h1 className="text-lg md:text-xl font-extrabold text-foreground">لوحة التحكم</h1>
               <p className="text-xs text-muted-foreground hidden sm:block">مرحباً {USER.name}، إليك ملخص نشاطك اليوم</p>
