@@ -84,7 +84,7 @@ function Dashboard() {
   // Auto-collapse sidebar on tablet (768-1279px)
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1279px)");
-    const apply = () => setCollapsed(mq.matches);
+    const apply = () => setCollapsed((current) => (current === mq.matches ? current : mq.matches));
     apply();
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);

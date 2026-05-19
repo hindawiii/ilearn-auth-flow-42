@@ -112,7 +112,7 @@ function AuthPage() {
         </div>
 
         {/* Desktop grid layout */}
-        <div className="relative md:grid md:grid-cols-2 md:min-h-[560px]">
+        <div className="relative md:grid md:grid-cols-2 md:min-h-[560px] md:[direction:ltr]">
           {/* Sign in form */}
           <FormPanel
             visible={!isSignUp}
@@ -284,7 +284,7 @@ function FormPanel({
   const desktopOrder = side === "right" ? "md:order-1" : "md:order-2";
   return (
     <div
-      className={`p-8 md:p-10 flex-col gap-4 ${desktopOrder} ${visible ? "flex" : "hidden md:flex"}`}
+      className={`relative z-30 p-8 md:p-10 flex-col gap-4 md:[direction:rtl] ${desktopOrder} ${visible ? "flex" : "hidden md:flex"}`}
       style={{
         // Desktop: fade form on the side covered by the slider
         opacity: (side === "right" && isSignUp) || (side === "left" && !isSignUp) ? 0 : 1,
