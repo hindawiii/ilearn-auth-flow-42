@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  GraduationCap, LayoutDashboard, BookOpen, Trophy, FileText,
+  GraduationCap, LayoutDashboard, BookOpen, TrendingUp, Trophy, FileText,
   BarChart3, LogOut, Bell, MessageSquare, Search, ChevronRight, ChevronLeft,
   Monitor, Smartphone, Code2, Camera, Brain, Wrench, Lock, Play, Clock, Flame,
   Star, CheckCircle2, Award, MessageCircle, Bot, Send, X, Moon, Sun,
