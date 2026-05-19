@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   GraduationCap, LayoutDashboard, BookOpen, TrendingUp, Trophy, FileText,
   BarChart3, LogOut, Bell, MessageSquare, Search, ChevronRight, ChevronLeft,
@@ -51,12 +51,12 @@ const STATS = [
 ];
 
 const SECTIONS = [
-  { name: "الحاسوب", desc: "كل ما يخص أجهزة الحاسوب وأنظمة التشغيل", icon: Monitor, color: "#6C5CE7", bgClass: "from-[#6C5CE7] to-[#A29BFE]", lessons: 42, quizzes: 12, progress: 45, status: "active" },
-  { name: "الهواتف", desc: "صيانة وبرمجة وتطبيقات الهواتف الذكية", icon: Smartphone, color: "#00D2D3", bgClass: "from-[#00D2D3] to-[#54E1E2]", lessons: 28, quizzes: 8, progress: 20, status: "active" },
-  { name: "البرمجة", desc: "تعلم لغات البرمجة من الصفر إلى الاحتراف", icon: Code2, color: "#FF9F43", bgClass: "from-[#FF9F43] to-[#FFB976]", lessons: 64, quizzes: 18, progress: 60, status: "active" },
-  { name: "التصوير", desc: "فن التصوير الفوتوغرافي وتحرير الصور", icon: Camera, color: "#10AC84", bgClass: "from-[#10AC84] to-[#1DD1A1]", lessons: 32, quizzes: 10, progress: 10, status: "active" },
-  { name: "الذكاء الاصطناعي", desc: "استكشف عالم AI وتعلم الآلة", icon: Brain, color: "#6C5CE7", bgClass: "from-[#6C5CE7] to-[#00D2D3]", lessons: 38, quizzes: 14, progress: 15, status: "new" },
-  { name: "الصيانة", desc: "صيانة الأجهزة الإلكترونية المتقدمة", icon: Wrench, color: "#EE5A6F", bgClass: "from-[#EE5A6F] to-[#F38BA0]", lessons: 0, quizzes: 0, progress: 0, status: "locked" },
+  { name: "الحاسوب", desc: "كل ما يخص أجهزة الحاسوب وأنظمة التشغيل", icon: Monitor, color: "#6C5CE7", bgClass: "from-[#4A3F9F] to-[#6C5CE7]", lessons: 42, quizzes: 12, progress: 45, status: "active" },
+  { name: "الهواتف", desc: "صيانة وبرمجة وتطبيقات الهواتف الذكية", icon: Smartphone, color: "#00D2D3", bgClass: "from-[#008B8B] to-[#00D2D3]", lessons: 28, quizzes: 8, progress: 20, status: "active" },
+  { name: "البرمجة", desc: "تعلم لغات البرمجة من الصفر إلى الاحتراف", icon: Code2, color: "#E17055", bgClass: "from-[#C75B39] to-[#E17055]", lessons: 64, quizzes: 18, progress: 60, status: "active" },
+  { name: "التصوير", desc: "فن التصوير الفوتوغرافي وتحرير الصور", icon: Camera, color: "#00B894", bgClass: "from-[#008B6B] to-[#00B894]", lessons: 32, quizzes: 10, progress: 10, status: "active" },
+  { name: "الذكاء الاصطناعي", desc: "استكشف عالم AI وتعلم الآلة", icon: Brain, color: "#6C5CE7", bgClass: "from-[#4A3F9F] to-[#008B8B]", lessons: 38, quizzes: 14, progress: 15, status: "new" },
+  { name: "الصيانة", desc: "صيانة الأجهزة الإلكترونية المتقدمة", icon: Wrench, color: "#E84393", bgClass: "from-[#C0396B] to-[#E84393]", lessons: 0, quizzes: 0, progress: 0, status: "locked" },
 ];
 
 const ACTIVITIES = [
@@ -81,13 +81,34 @@ function Dashboard() {
   const [activityFilter, setActivityFilter] = useState("all");
   const { isDark, toggle } = useTheme();
 
+  // Auto-collapse sidebar on tablet (768-1279px)
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1279px)");
+    const apply = () => setCollapsed(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background flex w-full">
       {/* ============ SIDEBAR (desktop) ============ */}
       <aside
         className={`${collapsed ? "w-20" : "w-72"} hidden lg:flex flex-col bg-card border-l border-border transition-all duration-300 sticky top-0 h-screen`}
       >
-        {/* Logo + collapse */}
+        {/* Collapse button — sits on the left edge (facing main content in RTL), centered vertically */}
+        <button
+          onClick={() => setCollapsed((c) => !c)}
+          className="absolute top-1/2 -translate-y-1/2 -end-[15px] z-30 h-[30px] w-[30px] rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+          aria-label="طي الشريط"
+        >
+          <ChevronLeft
+            className="w-4 h-4 transition-transform duration-300"
+            style={{ transform: collapsed ? "rotate(180deg)" : "rotate(0deg)" }}
+          />
+        </button>
+
+        {/* Logo */}
         <div className="relative p-5 border-b border-border flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--gradient-primary)" }}>
             <GraduationCap className="w-5 h-5 text-white" />
@@ -97,13 +118,6 @@ function Dashboard() {
               iLearn
             </span>
           )}
-          <button
-            onClick={() => setCollapsed((c) => !c)}
-            className="absolute -start-3 top-7 h-7 w-7 rounded-full bg-primary text-white flex items-center justify-center shadow-md hover:scale-110 transition-transform z-10"
-            aria-label="طي الشريط"
-          >
-            {collapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-          </button>
         </div>
 
         {/* Mini profile */}
@@ -215,7 +229,7 @@ function Dashboard() {
 
         <div className="p-4 md:p-8 space-y-8">
           {/* Stats */}
-          <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {STATS.map((s, i) => (
               <div
                 key={s.label}
@@ -242,7 +256,7 @@ function Dashboard() {
                 عرض الكل <ChevronLeft className="w-4 h-4" />
               </button>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {SECTIONS.map((sec, i) => (
                 <div
                   key={sec.name}
@@ -461,7 +475,7 @@ function AIAssistant({ open, setOpen }: { open: boolean; setOpen: (v: boolean) =
       <button
         onClick={() => setOpen(!open)}
         aria-label="المساعد الذكي"
-        className="fixed bottom-6 start-6 z-40 h-14 w-14 rounded-full text-white shadow-2xl flex items-center justify-center hover:scale-110 transition-transform"
+        className="fixed bottom-6 start-6 z-40 h-[60px] w-[60px] max-sm:h-[50px] max-sm:w-[50px] rounded-full text-white flex items-center justify-center hover:scale-110 transition-transform animate-ilearn-pulse"
         style={{ background: "var(--gradient-primary)" }}
       >
         <span className="absolute inset-0 rounded-full animate-ping opacity-30" style={{ background: "var(--gradient-primary)" }} />
