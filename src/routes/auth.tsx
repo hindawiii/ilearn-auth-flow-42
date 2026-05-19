@@ -94,7 +94,7 @@ function AuthPage() {
       <ThemeToggle />
       <Toaster position="top-center" richColors />
 
-      <div className="relative w-full max-w-[900px] min-h-[560px] bg-card rounded-3xl overflow-hidden shadow-[var(--shadow-elegant)] border border-border">
+      <div className="relative z-10 w-full max-w-[900px] min-h-[560px] bg-card rounded-3xl overflow-hidden shadow-[var(--shadow-elegant)] border border-border" style={{ opacity: 1 }}>
         {/* Mobile tabs (visible < md) */}
         <div className="md:hidden flex border-b border-border">
           <button
@@ -359,7 +359,7 @@ function InputField({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full h-12 rounded-xl bg-[var(--input-bg)] border border-border ps-10 pe-10 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+        className="w-full h-12 rounded-xl bg-[var(--input-bg)] border border-border ps-10 pe-10 text-sm font-medium text-foreground placeholder:text-[var(--input-placeholder)] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
       />
       {trailing && (
         <span className="absolute inset-y-0 end-3 flex items-center">
