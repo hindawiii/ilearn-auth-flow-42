@@ -228,3 +228,69 @@ input::placeholder, textarea::placeholder {
 .animate-ilearn-slide-up { animation: ilearn-slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
 .animate-ilearn-spin { animation: ilearn-spin 0.8s linear infinite; }
 .animate-ilearn-pulse { animation: ilearn-pulse 2s ease-in-out infinite; }
+
+/* Gradient text shift */
+@keyframes ilearn-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.ilearn-gradient-text {
+  background: linear-gradient(90deg, #6C5CE7, #00D2D3, #6C5CE7);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ilearn-gradient-shift 5s ease infinite;
+}
+
+/* Glow pulse for active card */
+@keyframes ilearn-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.35), 0 10px 30px rgba(108, 92, 231, 0.15); }
+  50% { box-shadow: 0 0 0 6px rgba(108, 92, 231, 0.12), 0 14px 40px rgba(108, 92, 231, 0.35); }
+}
+.ilearn-glow { animation: ilearn-glow 2.4s ease-in-out infinite; }
+
+/* Ripple */
+@keyframes ilearn-ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+.ilearn-ripple {
+  position: absolute; border-radius: 9999px; transform: scale(0);
+  background: rgba(255,255,255,0.5); pointer-events: none;
+  animation: ilearn-ripple 0.6s ease-out;
+}
+
+/* Shimmer (loading effect) */
+@keyframes ilearn-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.ilearn-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  background-size: 200% 100%;
+  animation: ilearn-shimmer 2s infinite;
+}
+
+/* Confetti */
+@keyframes ilearn-confetti-fall {
+  0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+.ilearn-confetti {
+  position: fixed; top: 0; width: 10px; height: 14px; z-index: 100;
+  animation: ilearn-confetti-fall linear forwards;
+}
+
+/* Particles */
+@keyframes ilearn-particle {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(var(--dx), var(--dy)); }
+}
+
+/* Press effect on all interactive */
+button:active, .ilearn-press:active { transform: scale(0.97); }
+button { transition: transform 0.1s ease, opacity 0.2s, background-color 0.2s, color 0.2s, border-color 0.2s; }
+
+/* Hover lift utility */
+.ilearn-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.ilearn-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(108,92,231,0.18); }
