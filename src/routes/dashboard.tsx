@@ -1,12 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   GraduationCap, LayoutDashboard, BookOpen, TrendingUp, Trophy, FileText,
   BarChart3, LogOut, Bell, MessageSquare, Search, ChevronLeft,
   Monitor, Smartphone, Code2, Camera, Brain, Wrench, Lock, Play, Clock, Flame,
   Star, CheckCircle2, Award, MessageCircle, Bot, Send, X, Moon, Sun,
+  Volume2, VolumeX,
 } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { useCountUp } from "@/hooks/use-count-up";
+import { useSound, type SoundKind } from "@/hooks/use-sound";
+import { Confetti } from "@/components/Confetti";
+import { Particles } from "@/components/Particles";
+import { RippleButton } from "@/components/RippleButton";
+import { LessonPlayer, type Lesson } from "@/components/LessonPlayer";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
