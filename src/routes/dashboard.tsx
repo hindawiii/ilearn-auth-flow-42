@@ -51,12 +51,7 @@ const COMMUNITY_NAV = [
   { icon: BarChart3, label: "المتصدرون" },
 ];
 
-const STATS = [
-  { label: "دروس مكتملة", value: "24", change: "+12%", up: true, icon: BookOpen, color: "text-primary", bg: "bg-primary/10" },
-  { label: "ساعات تعلم", value: "156", change: "+8%", up: true, icon: Clock, color: "text-secondary", bg: "bg-secondary/10" },
-  { label: "أيام متتالية", value: "7", change: "+25%", up: true, icon: Flame, color: "text-warning", bg: "bg-warning/10" },
-  { label: "نقاط XP", value: "2,450", change: "-5%", up: false, icon: Star, color: "text-primary-light", bg: "bg-primary-light/10" },
-];
+type Stat = { key: string; label: string; value: number; change: string; up: boolean; icon: React.ComponentType<{ className?: string }>; color: string; bg: string; format?: (n: number) => string };
 
 const SECTIONS = [
   { name: "الحاسوب", desc: "كل ما يخص أجهزة الحاسوب وأنظمة التشغيل", icon: Monitor, color: "#6C5CE7", bgClass: "from-[#4A3F9F] to-[#6C5CE7]", lessons: 42, quizzes: 12, progress: 45, status: "active" },
@@ -67,20 +62,40 @@ const SECTIONS = [
   { name: "الصيانة", desc: "صيانة الأجهزة الإلكترونية المتقدمة", icon: Wrench, color: "#E84393", bgClass: "from-[#C0396B] to-[#E84393]", lessons: 0, quizzes: 0, progress: 0, status: "locked" },
 ];
 
-const ACTIVITIES = [
-  { icon: CheckCircle2, color: "text-success", title: "أكملت درس: مقدمة في Python", time: "منذ ساعتين", xp: "+50 XP" },
-  { icon: Award, color: "text-warning", title: "نجحت في اختبار: HTML & CSS", time: "منذ 5 ساعات", xp: "+100 XP" },
-  { icon: Trophy, color: "text-primary", title: "حصلت على شارة: مبرمج مبتدئ", time: "أمس", xp: "+200 XP" },
-  { icon: MessageCircle, color: "text-secondary", title: "علّقت في منتدى البرمجة", time: "أمس", xp: "+10 XP" },
+const NOW = Date.now();
+const ACTIVITIES_INIT = [
+  { icon: CheckCircle2, color: "text-success", title: "أكملت درس: مقدمة في Python", at: NOW - 1000 * 60 * 60 * 2, xp: "+50 XP" },
+  { icon: Award, color: "text-warning", title: "نجحت في اختبار: HTML & CSS", at: NOW - 1000 * 60 * 60 * 5, xp: "+100 XP" },
+  { icon: Trophy, color: "text-primary", title: "حصلت على شارة: مبرمج مبتدئ", at: NOW - 1000 * 60 * 60 * 26, xp: "+200 XP" },
+  { icon: MessageCircle, color: "text-secondary", title: "علّقت في منتدى البرمجة", at: NOW - 1000 * 60 * 60 * 30, xp: "+10 XP" },
 ];
 
-const LEADERBOARD = [
-  { rank: 1, name: "سارة المحمدي", xp: "5,890" },
-  { rank: 2, name: "خالد الزهراني", xp: "5,210" },
-  { rank: 3, name: "نورا العتيبي", xp: "4,750" },
-  { rank: 4, name: "محمد السالم", xp: "4,320" },
-  { rank: 5, name: "ريم الحربي", xp: "3,980" },
+const LEADERBOARD_INIT = [
+  { name: "سارة المحمدي", xp: 5890 },
+  { name: "خالد الزهراني", xp: 5210 },
+  { name: "نورا العتيبي", xp: 4750 },
+  { name: "محمد السالم", xp: 4320 },
+  { name: "ريم الحربي", xp: 3980 },
 ];
+
+const NOTIFICATIONS_INIT = [
+  { id: 1, icon: Trophy, title: "🎉 وصلت للمستوى 7!", time: "منذ 10 دقائق", color: "text-warning" },
+  { id: 2, icon: MessageCircle, title: "ردّت سارة على تعليقك", time: "منذ ساعة", color: "text-secondary" },
+  { id: 3, icon: Award, title: "شارة جديدة في انتظارك", time: "منذ 3 ساعات", color: "text-primary" },
+];
+
+function fmtAgo(ts: number, now: number): string {
+  const diff = Math.max(0, Math.floor((now - ts) / 60000)); // minutes
+  if (diff < 1) return "الآن";
+  if (diff < 60) return `منذ ${diff} دقيقة`;
+  const h = Math.floor(diff / 60);
+  if (h < 24) return `منذ ${h} ساعة`;
+  const d = Math.floor(h / 24);
+  return d === 1 ? "أمس" : `منذ ${d} يوم`;
+}
+
+const STREAK_KEY = "ilearn-streak";
+const XP_KEY = "ilearn-xp";
 
 function Dashboard() {
   const [collapsed, setCollapsed] = useState(false);
