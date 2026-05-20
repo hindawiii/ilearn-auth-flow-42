@@ -679,6 +679,26 @@ function RankBadge({ rank }: { rank: number }) {
   return <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-extrabold ${styles}`}>{rank}</div>;
 }
 
+function StatCard({ stat, index }: { stat: Stat; index: number }) {
+  const v = useCountUp(stat.value, 1500);
+  const display = stat.format ? stat.format(v) : String(v);
+  return (
+    <div
+      className="p-5 rounded-2xl bg-card border border-border ilearn-lift animate-ilearn-slide-up"
+      style={{ animationDelay: `${index * 100}ms`, animationFillMode: "backwards" }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className={`h-11 w-11 rounded-xl flex items-center justify-center ${stat.bg}`}>
+          <stat.icon className={`w-5 h-5 ${stat.color}`} />
+        </div>
+        <span className={`text-xs font-bold ${stat.up ? "text-success" : "text-destructive"}`}>{stat.change}</span>
+      </div>
+      <div className="text-2xl md:text-3xl font-extrabold text-foreground tabular-nums">{display}</div>
+      <div className="text-xs text-muted-foreground mt-1">{stat.label}</div>
+    </div>
+  );
+}
+
 // ============ AI ASSISTANT ============
 type ChatMsg = { from: "bot" | "user"; text: string };
 
