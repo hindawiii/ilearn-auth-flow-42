@@ -103,6 +103,63 @@ function Dashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activityFilter, setActivityFilter] = useState("all");
   const { isDark, toggle } = useTheme();
+  const { muted, toggleMute, play } = useSound();
+
+  // === Live state ===
+  const [now, setNow] = useState(Date.now());
+  const [searchQ, setSearchQ] = useState("");
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState(NOTIFICATIONS_INIT);
+  const [activities, setActivities] = useState(ACTIVITIES_INIT);
+  const [leaderboard, setLeaderboard] = useState(LEADERBOARD_INIT);
+  const [activeSectionIdx, setActiveSectionIdx] = useState(0);
+  const [currentLesson, setCurrentLesson] = useState<Lesson | null>(null);
+  const [confettiTick, setConfettiTick] = useState(0);
+  const [openBadge, setOpenBadge] = useState<string | null>(null);
+  const [openLeader, setOpenLeader] = useState<typeof LEADERBOARD_INIT[number] | null>(null);
+
+  // XP from localStorage
+  const [xp, setXp] = useState(2450);
+  const [streak, setStreak] = useState(7);
+  const [lessonsDone, setLessonsDone] = useState(24);
+  const [hours, setHours] = useState(156);
+
+  useEffect(() => {
+    try {
+      const sx = localStorage.getItem(XP_KEY);
+      if (sx) setXp(parseInt(sx, 10) || 2450);
+      const last = localStorage.getItem(STREAK_KEY);
+      const today = new Date().toDateString();
+      if (last) {
+        const { date, streak: st } = JSON.parse(last) as { date: string; streak: number };
+        const lastD = new Date(date);
+        const diffDays = Math.floor((Date.now() - lastD.getTime()) / 86400000);
+        if (diffDays === 0) setStreak(st);
+        else if (diffDays === 1) { setStreak(st + 1); localStorage.setItem(STREAK_KEY, JSON.stringify({ date: today, streak: st + 1 })); }
+        else { setStreak(1); localStorage.setItem(STREAK_KEY, JSON.stringify({ date: today, streak: 1 })); }
+      } else {
+        localStorage.setItem(STREAK_KEY, JSON.stringify({ date: today, streak: 7 }));
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  // Tick clock for live "minutes ago"
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Leaderboard random changes every 15s
+  useEffect(() => {
+    const id = setInterval(() => {
+      setLeaderboard((lb) => {
+        const next = lb.map((u) => ({ ...u, xp: u.xp + Math.floor(Math.random() * 80) }));
+        next.sort((a, b) => b.xp - a.xp);
+        return next;
+      });
+    }, 15000);
+    return () => clearInterval(id);
+  }, []);
 
   // Auto-collapse sidebar on tablet (768-1279px)
   useEffect(() => {
@@ -113,8 +170,51 @@ function Dashboard() {
     return () => mq.removeEventListener("change", apply);
   }, []);
 
+  const handleSoundClick = (kind: SoundKind = "click") => play(kind);
+
+  const handleCompleteLesson = () => {
+    const newXp = xp + 50;
+    setXp(newXp);
+    setLessonsDone((n) => n + 1);
+    setHours((n) => n + 1);
+    try { localStorage.setItem(XP_KEY, String(newXp)); } catch { /* ignore */ }
+    setActivities((a) => [
+      { icon: CheckCircle2, color: "text-success", title: `أكملت درس: ${currentLesson?.title ?? "درس"}`, at: Date.now(), xp: "+50 XP" },
+      ...a.slice(0, 6),
+    ]);
+    setConfettiTick((t) => t + 1);
+    play("success");
+    toast.success("🎉 تهانينا! +50 XP", { description: "تم إضافة الدرس إلى تقدمك" });
+  };
+
+  const triggerNotify = () => {
+    play("notify");
+    const id = Date.now();
+    setNotifications((ns) => [
+      { id, icon: Bell, title: "إشعار جديد: تفقد دروسك القادمة", time: "الآن", color: "text-primary" },
+      ...ns,
+    ].slice(0, 6));
+  };
+
+  // Build STATS dynamically
+  const STATS: Stat[] = [
+    { key: "lessons", label: "دروس مكتملة", value: lessonsDone, change: "+12%", up: true, icon: BookOpen, color: "text-primary", bg: "bg-primary/10" },
+    { key: "hours", label: "ساعات تعلم", value: hours, change: "+8%", up: true, icon: Clock, color: "text-secondary", bg: "bg-secondary/10" },
+    { key: "streak", label: "أيام متتالية", value: streak, change: "+25%", up: true, icon: Flame, color: "text-warning", bg: "bg-warning/10" },
+    { key: "xp", label: "نقاط XP", value: xp, change: "-5%", up: false, icon: Star, color: "text-primary-light", bg: "bg-primary-light/10",
+      format: (n) => n.toLocaleString("en-US") },
+  ];
+
+  const filteredSections = useMemo(() => {
+    const q = searchQ.trim().toLowerCase();
+    if (!q) return SECTIONS.map((s, i) => ({ s, i }));
+    return SECTIONS.map((s, i) => ({ s, i })).filter(({ s }) => s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q));
+  }, [searchQ]);
+
   return (
     <div className="min-h-screen bg-background flex w-full">
+      <Particles count={50} />
+      <Confetti trigger={confettiTick} />
       {/* ============ SIDEBAR (desktop) ============ */}
       <aside
         className={`${collapsed ? "w-20" : "w-72"} hidden lg:flex flex-col bg-card border-l border-border transition-all duration-300 sticky top-0 h-screen`}
