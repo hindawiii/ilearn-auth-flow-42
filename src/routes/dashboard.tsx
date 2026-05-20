@@ -323,28 +323,61 @@ function Dashboard() {
               <LayoutDashboard className="w-5 h-5" />
             </button>
             <div className="min-w-0">
-              <h1 className="text-lg md:text-xl font-extrabold text-foreground">لوحة التحكم</h1>
+              <h1 className="text-lg md:text-xl font-extrabold ilearn-gradient-text">لوحة التحكم</h1>
               <p className="text-xs text-muted-foreground hidden sm:block">مرحباً {USER.name}، إليك ملخص نشاطك اليوم</p>
             </div>
 
             <div className="flex-1 max-w-md mx-auto hidden md:block relative">
               <Search className="absolute inset-y-0 start-3 my-auto w-4 h-4 text-muted-foreground" />
               <input
+                value={searchQ}
+                onChange={(e) => setSearchQ(e.target.value)}
                 placeholder="البحث في الدورات..."
                 className="w-full h-11 rounded-xl bg-card border border-border ps-10 pe-4 text-sm outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <div className="flex items-center gap-2 ms-auto">
-              <IconBtn onClick={toggle} aria-label="تبديل الوضع">
+              <IconBtn onClick={() => { handleSoundClick(); toggle(); }} aria-label="تبديل الوضع">
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </IconBtn>
-              <IconBtn aria-label="إشعارات">
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-2 end-2 w-2 h-2 rounded-full bg-destructive" />
-              </IconBtn>
-              <IconBtn aria-label="رسائل">
+              <div className="relative">
+                <IconBtn onClick={() => { handleSoundClick(); setNotifOpen((v) => !v); }} aria-label="إشعارات">
+                  <Bell className="w-4 h-4" />
+                  {notifications.length > 0 && (
+                    <span className="absolute top-2 end-2 w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                  )}
+                </IconBtn>
+                {notifOpen && (
+                  <>
+                    <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} />
+                    <div className="absolute end-0 mt-2 w-80 max-w-[90vw] rounded-2xl bg-card border border-border shadow-2xl z-40 animate-ilearn-slide-up overflow-hidden">
+                      <div className="p-4 border-b border-border flex items-center justify-between">
+                        <span className="font-bold text-sm">الإشعارات</span>
+                        <button onClick={triggerNotify} className="text-[11px] text-primary font-bold">محاكاة إشعار</button>
+                      </div>
+                      <ul className="max-h-80 overflow-y-auto">
+                        {notifications.map((n) => (
+                          <li key={n.id} className="flex items-start gap-3 p-3 hover:bg-accent transition-colors border-b border-border last:border-0">
+                            <div className={`h-9 w-9 rounded-lg bg-accent flex items-center justify-center shrink-0 ${n.color}`}>
+                              <n.icon className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-bold text-foreground">{n.title}</div>
+                              <div className="text-[10px] text-muted-foreground mt-0.5">{n.time}</div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </div>
+              <IconBtn onClick={() => handleSoundClick()} aria-label="رسائل">
                 <MessageSquare className="w-4 h-4" />
+              </IconBtn>
+              <IconBtn onClick={() => { handleSoundClick(); toggleMute(); }} aria-label="كتم الصوت" title={muted ? "إلغاء الكتم" : "كتم"}>
+                {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </IconBtn>
             </div>
           </div>
@@ -354,20 +387,7 @@ function Dashboard() {
           {/* Stats */}
           <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {STATS.map((s, i) => (
-              <div
-                key={s.label}
-                className="p-5 rounded-2xl bg-card border border-border hover:shadow-lg hover:-translate-y-1 transition-all animate-ilearn-slide-up"
-                style={{ animationDelay: `${i * 60}ms`, animationFillMode: "backwards" }}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`h-11 w-11 rounded-xl flex items-center justify-center ${s.bg}`}>
-                    <s.icon className={`w-5 h-5 ${s.color}`} />
-                  </div>
-                  <span className={`text-xs font-bold ${s.up ? "text-success" : "text-destructive"}`}>{s.change}</span>
-                </div>
-                <div className="text-2xl md:text-3xl font-extrabold text-foreground">{s.value}</div>
-                <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
-              </div>
+              <StatCard key={s.key} stat={s} index={i} />
             ))}
           </section>
 
@@ -380,12 +400,18 @@ function Dashboard() {
               </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-              {SECTIONS.map((sec, i) => (
+              {filteredSections.length === 0 && (
+                <div className="col-span-full p-10 text-center text-muted-foreground bg-card rounded-2xl border border-border">
+                  لا توجد نتائج مطابقة للبحث
+                </div>
+              )}
+              {filteredSections.map(({ s: sec, i }) => (
                 <div
                   key={sec.name}
-                  className={`relative rounded-2xl bg-card border border-border overflow-hidden group transition-all animate-ilearn-slide-up ${
-                    sec.status === "locked" ? "opacity-60" : "hover:shadow-xl hover:-translate-y-1 hover:border-primary"
-                  }`}
+                  onMouseEnter={() => sec.status !== "locked" && setActiveSectionIdx(i)}
+                  className={`relative rounded-2xl bg-card border border-border overflow-hidden group ilearn-lift animate-ilearn-slide-up ${
+                    sec.status === "locked" ? "opacity-60" : "hover:border-primary"
+                  } ${activeSectionIdx === i && sec.status !== "locked" ? "ilearn-glow border-primary" : ""}`}
                   style={{ animationDelay: `${i * 70}ms`, animationFillMode: "backwards" }}
                 >
                   {/* Color header */}
@@ -422,9 +448,16 @@ function Dashboard() {
                             <div className="h-full rounded-full transition-all duration-700" style={{ width: `${sec.progress}%`, backgroundColor: sec.color }} />
                           </div>
                         </div>
-                        <button className="w-full h-10 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity" style={{ background: "var(--gradient-primary)" }}>
+                        <RippleButton
+                          onClick={() => {
+                            handleSoundClick();
+                            setCurrentLesson({ title: `الدرس التالي في ${sec.name}`, section: sec.name, description: sec.desc });
+                          }}
+                          className="w-full h-10 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90"
+                          style={{ background: "var(--gradient-primary)" }}
+                        >
                           <Play className="w-4 h-4 fill-current" /> متابعة التعلم
-                        </button>
+                        </RippleButton>
                       </>
                     ) : (
                       <button disabled className="w-full h-10 rounded-xl bg-muted text-muted-foreground text-sm font-bold cursor-not-allowed">
@@ -451,7 +484,7 @@ function Dashboard() {
                   ].map((f) => (
                     <button
                       key={f.id}
-                      onClick={() => setActivityFilter(f.id)}
+                      onClick={() => { handleSoundClick(); setActivityFilter(f.id); }}
                       className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
                         activityFilter === f.id ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
                       }`}
@@ -462,14 +495,14 @@ function Dashboard() {
                 </div>
               </div>
               <ul className="space-y-3">
-                {ACTIVITIES.map((a, i) => (
+                {activities.map((a, i) => (
                   <li key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-accent transition-colors">
                     <div className={`h-10 w-10 rounded-xl bg-accent flex items-center justify-center ${a.color}`}>
                       <a.icon className="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-bold text-foreground truncate">{a.title}</div>
-                      <div className="text-xs text-muted-foreground">{a.time}</div>
+                      <div className="text-xs text-muted-foreground">{fmtAgo(a.at, now)}</div>
                     </div>
                     <span className="text-xs font-bold text-primary shrink-0">{a.xp}</span>
                   </li>
@@ -481,11 +514,15 @@ function Dashboard() {
             <div className="p-5 rounded-2xl bg-card border border-border">
               <h2 className="text-lg font-extrabold text-foreground mb-5">المتصدّرون</h2>
               <ul className="space-y-2">
-                {LEADERBOARD.map((u) => (
-                  <li key={u.rank} className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors">
-                    <RankBadge rank={u.rank} />
+                {leaderboard.map((u, idx) => (
+                  <li
+                    key={u.name}
+                    onClick={() => { handleSoundClick(); setOpenLeader(u); }}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-all cursor-pointer hover:translate-x-1"
+                  >
+                    <RankBadge rank={idx + 1} />
                     <span className="flex-1 text-sm font-medium text-foreground truncate">{u.name}</span>
-                    <span className="text-xs font-bold text-primary">{u.xp} XP</span>
+                    <span className="text-xs font-bold text-primary tabular-nums">{u.xp.toLocaleString("en-US")} XP</span>
                   </li>
                 ))}
                 <li className="mt-3 pt-3 border-t border-border flex items-center gap-3 p-2 rounded-lg bg-primary/5">
@@ -493,9 +530,31 @@ function Dashboard() {
                     42
                   </div>
                   <span className="flex-1 text-sm font-bold text-foreground">أنت ({USER.name})</span>
-                  <span className="text-xs font-bold text-primary">2,450 XP</span>
+                  <span className="text-xs font-bold text-primary tabular-nums">{xp.toLocaleString("en-US")} XP</span>
                 </li>
               </ul>
+
+              {/* Badges */}
+              <div className="mt-5 pt-5 border-t border-border">
+                <h3 className="text-sm font-bold text-foreground mb-3">شاراتك</h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: "starter", icon: Star, color: "from-yellow-400 to-orange-500", name: "البداية" },
+                    { id: "coder", icon: Code2, color: "from-purple-500 to-indigo-600", name: "مبرمج" },
+                    { id: "streak", icon: Flame, color: "from-orange-500 to-red-500", name: "نار" },
+                    { id: "scholar", icon: Award, color: "from-cyan-400 to-blue-500", name: "عالم" },
+                  ].map((b) => (
+                    <button
+                      key={b.id}
+                      onClick={() => { handleSoundClick(); setOpenBadge(b.name); }}
+                      className={`h-12 w-12 rounded-xl bg-gradient-to-br ${b.color} text-white flex items-center justify-center shadow-md hover:scale-150 transition-transform duration-300`}
+                      title={b.name}
+                    >
+                      <b.icon className="w-5 h-5" />
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </section>
         </div>
@@ -503,6 +562,53 @@ function Dashboard() {
 
       {/* ============ AI ASSISTANT FAB ============ */}
       <AIAssistant open={chatOpen} setOpen={setChatOpen} />
+
+      {/* Lesson player */}
+      <LessonPlayer lesson={currentLesson} onClose={() => setCurrentLesson(null)} onComplete={handleCompleteLesson} />
+
+      {/* Badge modal */}
+      {openBadge && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-ilearn-slide-up">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setOpenBadge(null)} />
+          <div className="relative bg-card rounded-2xl p-8 max-w-sm w-full text-center border border-border shadow-2xl">
+            <div className="text-5xl mb-3">🏅</div>
+            <h3 className="text-xl font-extrabold text-foreground">{openBadge}</h3>
+            <p className="text-sm text-muted-foreground mt-2">شارة حصلت عليها مقابل تقدمك في رحلة التعلم.</p>
+            <button onClick={() => setOpenBadge(null)} className="mt-5 px-6 h-10 rounded-xl text-white font-bold" style={{ background: "var(--gradient-primary)" }}>
+              رائع
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Leader profile modal */}
+      {openLeader && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-ilearn-slide-up">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setOpenLeader(null)} />
+          <div className="relative bg-card rounded-2xl p-6 max-w-sm w-full border border-border shadow-2xl">
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 rounded-full flex items-center justify-center text-white font-extrabold text-2xl" style={{ background: "var(--gradient-primary)" }}>
+                {openLeader.name[0]}
+              </div>
+              <div>
+                <h3 className="font-extrabold text-foreground">{openLeader.name}</h3>
+                <div className="text-sm text-primary font-bold">{openLeader.xp.toLocaleString("en-US")} XP</div>
+              </div>
+            </div>
+            <div className="mt-5 space-y-2">
+              <div className="text-xs font-bold text-muted-foreground">أقسامه المفضلة</div>
+              <div className="flex flex-wrap gap-2">
+                {["البرمجة", "الذكاء الاصطناعي", "الحاسوب"].map((s) => (
+                  <span key={s} className="text-xs font-bold px-3 py-1.5 rounded-full bg-accent text-foreground">{s}</span>
+                ))}
+              </div>
+            </div>
+            <button onClick={() => setOpenLeader(null)} className="mt-5 w-full h-10 rounded-xl text-white font-bold" style={{ background: "var(--gradient-primary)" }}>
+              إغلاق
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
