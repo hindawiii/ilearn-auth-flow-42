@@ -454,16 +454,15 @@ function Dashboard() {
                             <div className="h-full rounded-full transition-all duration-700" style={{ width: `${sec.progress}%`, backgroundColor: sec.color }} />
                           </div>
                         </div>
-                        <RippleButton
-                          onClick={() => {
-                            handleSoundClick();
-                            setCurrentLesson({ title: `الدرس التالي في ${sec.name}`, section: sec.name, description: sec.desc });
-                          }}
+                        <Link
+                          to="/section/$id"
+                          params={{ id: NAME_TO_ID[sec.name] ?? "computer" }}
+                          onClick={() => handleSoundClick()}
                           className="w-full h-10 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90"
                           style={{ background: "var(--gradient-primary)" }}
                         >
                           <Play className="w-4 h-4 fill-current" /> متابعة التعلم
-                        </RippleButton>
+                        </Link>
                       </>
                     ) : (
                       <button disabled className="w-full h-10 rounded-xl bg-muted text-muted-foreground text-sm font-bold cursor-not-allowed">
