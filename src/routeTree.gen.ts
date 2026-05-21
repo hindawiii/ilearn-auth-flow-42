@@ -13,6 +13,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SectionIdRouteImport } from './routes/section.$id'
+import { Route as LessonIdRouteImport } from './routes/lesson.$id'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -34,17 +35,24 @@ const SectionIdRoute = SectionIdRouteImport.update({
   path: '/section/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LessonIdRoute = LessonIdRouteImport.update({
+  id: '/lesson/$id',
+  path: '/lesson/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/section/$id'
+  fullPaths: '/' | '/auth' | '/dashboard' | '/lesson/$id' | '/section/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/section/$id'
-  id: '__root__' | '/' | '/auth' | '/dashboard' | '/section/$id'
+  to: '/' | '/auth' | '/dashboard' | '/lesson/$id' | '/section/$id'
+  id: '__root__' | '/' | '/auth' | '/dashboard' | '/lesson/$id' | '/section/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  LessonIdRoute: typeof LessonIdRoute
   SectionIdRoute: typeof SectionIdRoute
 }
 
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SectionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lesson/$id': {
+      id: '/lesson/$id'
+      path: '/lesson/$id'
+      fullPath: '/lesson/$id'
+      preLoaderRoute: typeof LessonIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  LessonIdRoute: LessonIdRoute,
   SectionIdRoute: SectionIdRoute,
 }
 export const routeTree = rootRouteImport
