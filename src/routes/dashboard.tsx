@@ -15,6 +15,12 @@ import { Particles } from "@/components/Particles";
 import { RippleButton } from "@/components/RippleButton";
 import { LessonPlayer, type Lesson } from "@/components/LessonPlayer";
 import { toast } from "sonner";
+import { SECTIONS as SECTION_ROUTES } from "@/lib/sections-data";
+
+const NAME_TO_ID: Record<string, string> = SECTION_ROUTES.reduce((acc, s) => {
+  acc[s.name] = s.id;
+  return acc;
+}, {} as Record<string, string>);
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
