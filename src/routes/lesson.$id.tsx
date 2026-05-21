@@ -4,7 +4,7 @@ import {
   ArrowRight, ChevronRight, ChevronLeft, Play, CheckCircle2, Clock, Menu,
   FileText, ExternalLink, Moon, Sun, X,
 } from "lucide-react";
-import { findLesson, getCompleted, markCompleted, LEVEL_LABEL, LEVEL_COLOR } from "@/lib/sections-data";
+import { findLesson, getCompleted, markCompleted, LEVEL_LABEL, LEVEL_COLOR, type SectionData } from "@/lib/sections-data";
 import { useTheme } from "@/hooks/use-theme";
 import { useSound } from "@/hooks/use-sound";
 import { Confetti } from "@/components/Confetti";
@@ -288,16 +288,14 @@ function LessonPage() {
 }
 
 function LessonSidebar({
-  section, currentId, completed, className, embed,
+  section: sec, currentId, completed, className, embed,
 }: {
-  section: ReturnType<typeof findLesson> extends infer R ? R extends { section: infer S } ? S : never : never;
+  section: SectionData;
   currentId: string;
   completed: Set<string>;
   className?: string;
   embed?: boolean;
 }) {
-  // section is SectionData
-  const sec = section as { id: string; name: string; lessons: { id: string; title: string; duration: number }[] };
   return (
     <aside className={`flex-col bg-card border-l border-border ${className ?? ""} ${embed ? "flex flex-1 overflow-hidden" : ""}`}>
       {!embed && (
