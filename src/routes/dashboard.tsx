@@ -16,6 +16,7 @@ import { RippleButton } from "@/components/RippleButton";
 import { LessonPlayer, type Lesson } from "@/components/LessonPlayer";
 import { toast } from "sonner";
 import { SECTIONS as SECTION_ROUTES } from "@/lib/sections-data";
+import { ACHIEVEMENTS, getEarned, getLatestEarned, bumpCounter, checkAchievements } from "@/lib/achievements";
 
 const NAME_TO_ID: Record<string, string> = SECTION_ROUTES.reduce((acc, s) => {
   acc[s.name] = s.id;
@@ -123,6 +124,9 @@ function Dashboard() {
   const [confettiTick, setConfettiTick] = useState(0);
   const [openBadge, setOpenBadge] = useState<string | null>(null);
   const [openLeader, setOpenLeader] = useState<typeof LEADERBOARD_INIT[number] | null>(null);
+  const [earnedMap, setEarnedMap] = useState<Record<string, number>>({});
+
+  useEffect(() => { setEarnedMap(getEarned()); }, []);
 
   // XP from localStorage
   const [xp, setXp] = useState(2450);
@@ -148,6 +152,17 @@ function Dashboard() {
       }
     } catch { /* ignore */ }
   }, []);
+
+  // Re-check achievements when xp/streak change
+  useEffect(() => {
+    const newly = checkAchievements();
+    if (newly.length) {
+      setConfettiTick((t) => t + 1);
+      play("success");
+      newly.forEach((a) => toast.success(`🏆 إنجاز جديد! ${a.name}`, { description: a.desc }));
+    }
+    setEarnedMap(getEarned());
+  }, [xp, streak, lessonsDone, play]);
 
   // Tick clock for live "minutes ago"
   useEffect(() => {
