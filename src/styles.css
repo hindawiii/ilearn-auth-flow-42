@@ -294,3 +294,10 @@ button { transition: transform 0.1s ease, opacity 0.2s, background-color 0.2s, c
 /* Hover lift utility */
 .ilearn-lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
 .ilearn-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(108,92,231,0.18); }
+
+@keyframes ilearn-badge-pop {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.ilearn-badge-pop { animation: ilearn-badge-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both; }

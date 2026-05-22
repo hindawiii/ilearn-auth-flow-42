@@ -16,6 +16,7 @@ import { RippleButton } from "@/components/RippleButton";
 import { LessonPlayer, type Lesson } from "@/components/LessonPlayer";
 import { toast } from "sonner";
 import { SECTIONS as SECTION_ROUTES } from "@/lib/sections-data";
+import { ACHIEVEMENTS, getEarned, getLatestEarned, bumpCounter, checkAchievements } from "@/lib/achievements";
 
 const NAME_TO_ID: Record<string, string> = SECTION_ROUTES.reduce((acc, s) => {
   acc[s.name] = s.id;
@@ -39,7 +40,7 @@ const MAIN_NAV = [
   { icon: LayoutDashboard, label: "الرئيسية", active: true },
   { icon: BookOpen, label: "دوراتي", badge: "8" },
   { icon: TrendingUp, label: "تقدمي" },
-  { icon: Trophy, label: "الإنجازات", badge: "12" },
+  { icon: Trophy, label: "الإنجازات", to: "/achievements" },
 ];
 
 const SECTIONS_NAV = [
@@ -123,6 +124,9 @@ function Dashboard() {
   const [confettiTick, setConfettiTick] = useState(0);
   const [openBadge, setOpenBadge] = useState<string | null>(null);
   const [openLeader, setOpenLeader] = useState<typeof LEADERBOARD_INIT[number] | null>(null);
+  const [earnedMap, setEarnedMap] = useState<Record<string, number>>({});
+
+  useEffect(() => { setEarnedMap(getEarned()); }, []);
 
   // XP from localStorage
   const [xp, setXp] = useState(2450);
@@ -148,6 +152,17 @@ function Dashboard() {
       }
     } catch { /* ignore */ }
   }, []);
+
+  // Re-check achievements when xp/streak change
+  useEffect(() => {
+    const newly = checkAchievements();
+    if (newly.length) {
+      setConfettiTick((t) => t + 1);
+      play("success");
+      newly.forEach((a) => toast.success(`🏆 إنجاز جديد! ${a.name}`, { description: a.desc }));
+    }
+    setEarnedMap(getEarned());
+  }, [xp, streak, lessonsDone, play]);
 
   // Tick clock for live "minutes ago"
   useEffect(() => {
@@ -337,14 +352,14 @@ function Dashboard() {
               <Search className="absolute inset-y-0 start-3 my-auto w-4 h-4 text-muted-foreground" />
               <input
                 value={searchQ}
-                onChange={(e) => setSearchQ(e.target.value)}
+                onChange={(e) => { setSearchQ(e.target.value); if (e.target.value.length === 1) bumpCounter("search"); }}
                 placeholder="البحث في الدورات..."
                 className="w-full h-11 rounded-xl bg-card border border-border ps-10 pe-4 text-sm outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <div className="flex items-center gap-2 ms-auto">
-              <IconBtn onClick={() => { handleSoundClick(); toggle(); }} aria-label="تبديل الوضع">
+              <IconBtn onClick={() => { handleSoundClick(); toggle(); bumpCounter("dark"); }} aria-label="تبديل الوضع">
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </IconBtn>
               <div className="relative">
@@ -541,24 +556,41 @@ function Dashboard() {
 
               {/* Badges */}
               <div className="mt-5 pt-5 border-t border-border">
-                <h3 className="text-sm font-bold text-foreground mb-3">شاراتك</h3>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "starter", icon: Star, color: "from-yellow-400 to-orange-500", name: "البداية" },
-                    { id: "coder", icon: Code2, color: "from-purple-500 to-indigo-600", name: "مبرمج" },
-                    { id: "streak", icon: Flame, color: "from-orange-500 to-red-500", name: "نار" },
-                    { id: "scholar", icon: Award, color: "from-cyan-400 to-blue-500", name: "عالم" },
-                  ].map((b) => (
-                    <button
-                      key={b.id}
-                      onClick={() => { handleSoundClick(); setOpenBadge(b.name); }}
-                      className={`h-12 w-12 rounded-xl bg-gradient-to-br ${b.color} text-white flex items-center justify-center shadow-md hover:scale-150 transition-transform duration-300`}
-                      title={b.name}
-                    >
-                      <b.icon className="w-5 h-5" />
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-foreground">أحدث شاراتك</h3>
+                  <Link to="/achievements" className="text-[11px] text-primary font-bold">عرض الكل</Link>
                 </div>
+                {(() => {
+                  const latest = getLatestEarned(3);
+                  if (latest.length === 0) {
+                    return (
+                      <Link to="/achievements" className="block text-center p-4 rounded-xl bg-accent text-xs text-muted-foreground hover:bg-muted">
+                        لا توجد شارات بعد — أكمل دروسك لفتح الإنجازات
+                      </Link>
+                    );
+                  }
+                  return (
+                    <div className="flex flex-wrap gap-2">
+                      {latest.map(({ ach }) => (
+                        <button
+                          key={ach.id}
+                          onClick={() => { handleSoundClick(); setOpenBadge(ach.name); }}
+                          className={`h-12 w-12 rounded-xl bg-gradient-to-br ${ach.gradient} text-white flex items-center justify-center shadow-md hover:scale-125 transition-transform duration-300 text-xl`}
+                          title={ach.name}
+                        >
+                          {ach.emoji}
+                        </button>
+                      ))}
+                      <Link
+                        to="/achievements"
+                        onClick={() => handleSoundClick()}
+                        className="h-12 px-3 rounded-xl bg-accent text-foreground text-xs font-bold flex items-center justify-center hover:bg-muted"
+                      >
+                        +{Math.max(0, Object.keys(earnedMap).length - latest.length)} المزيد
+                      </Link>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </section>
@@ -623,22 +655,19 @@ function NavButton({
   item,
   collapsed,
 }: {
-  item: { icon: React.ComponentType<{ className?: string }>; label: string; active?: boolean; badge?: string; tag?: string; progress?: number; disabled?: boolean };
+  item: { icon: React.ComponentType<{ className?: string }>; label: string; active?: boolean; badge?: string; tag?: string; progress?: number; disabled?: boolean; to?: string };
   collapsed: boolean;
 }) {
-  return (
-    <button
-      disabled={item.disabled}
-      title={collapsed ? item.label : undefined}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+  const cls = `w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
         item.active
           ? "text-white shadow-md"
           : item.disabled
             ? "text-muted-foreground/60 cursor-not-allowed"
             : "text-muted-foreground hover:bg-accent hover:text-foreground"
-      } ${collapsed ? "justify-center" : ""}`}
-      style={item.active ? { background: "var(--gradient-primary)" } : undefined}
-    >
+      } ${collapsed ? "justify-center" : ""}`;
+  const style = item.active ? { background: "var(--gradient-primary)" } : undefined;
+  const inner = (
+    <>
       <item.icon className="w-5 h-5 shrink-0" />
       {!collapsed && (
         <>
@@ -660,6 +689,18 @@ function NavButton({
           )}
         </>
       )}
+    </>
+  );
+  if (item.to && !item.disabled) {
+    return (
+      <Link to={item.to} title={collapsed ? item.label : undefined} className={cls} style={style}>
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <button disabled={item.disabled} title={collapsed ? item.label : undefined} className={cls} style={style}>
+      {inner}
     </button>
   );
 }
