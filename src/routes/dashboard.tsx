@@ -556,24 +556,41 @@ function Dashboard() {
 
               {/* Badges */}
               <div className="mt-5 pt-5 border-t border-border">
-                <h3 className="text-sm font-bold text-foreground mb-3">شاراتك</h3>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "starter", icon: Star, color: "from-yellow-400 to-orange-500", name: "البداية" },
-                    { id: "coder", icon: Code2, color: "from-purple-500 to-indigo-600", name: "مبرمج" },
-                    { id: "streak", icon: Flame, color: "from-orange-500 to-red-500", name: "نار" },
-                    { id: "scholar", icon: Award, color: "from-cyan-400 to-blue-500", name: "عالم" },
-                  ].map((b) => (
-                    <button
-                      key={b.id}
-                      onClick={() => { handleSoundClick(); setOpenBadge(b.name); }}
-                      className={`h-12 w-12 rounded-xl bg-gradient-to-br ${b.color} text-white flex items-center justify-center shadow-md hover:scale-150 transition-transform duration-300`}
-                      title={b.name}
-                    >
-                      <b.icon className="w-5 h-5" />
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-bold text-foreground">أحدث شاراتك</h3>
+                  <Link to="/achievements" className="text-[11px] text-primary font-bold">عرض الكل</Link>
                 </div>
+                {(() => {
+                  const latest = getLatestEarned(3);
+                  if (latest.length === 0) {
+                    return (
+                      <Link to="/achievements" className="block text-center p-4 rounded-xl bg-accent text-xs text-muted-foreground hover:bg-muted">
+                        لا توجد شارات بعد — أكمل دروسك لفتح الإنجازات
+                      </Link>
+                    );
+                  }
+                  return (
+                    <div className="flex flex-wrap gap-2">
+                      {latest.map(({ ach }) => (
+                        <button
+                          key={ach.id}
+                          onClick={() => { handleSoundClick(); setOpenBadge(ach.name); }}
+                          className={`h-12 w-12 rounded-xl bg-gradient-to-br ${ach.gradient} text-white flex items-center justify-center shadow-md hover:scale-125 transition-transform duration-300 text-xl`}
+                          title={ach.name}
+                        >
+                          {ach.emoji}
+                        </button>
+                      ))}
+                      <Link
+                        to="/achievements"
+                        onClick={() => handleSoundClick()}
+                        className="h-12 px-3 rounded-xl bg-accent text-foreground text-xs font-bold flex items-center justify-center hover:bg-muted"
+                      >
+                        +{Math.max(0, Object.keys(earnedMap).length - latest.length)} المزيد
+                      </Link>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </section>
