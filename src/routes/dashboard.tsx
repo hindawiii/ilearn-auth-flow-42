@@ -40,7 +40,7 @@ const MAIN_NAV = [
   { icon: LayoutDashboard, label: "الرئيسية", active: true },
   { icon: BookOpen, label: "دوراتي", badge: "8" },
   { icon: TrendingUp, label: "تقدمي" },
-  { icon: Trophy, label: "الإنجازات", badge: "12" },
+  { icon: Trophy, label: "الإنجازات", to: "/achievements" },
 ];
 
 const SECTIONS_NAV = [
@@ -352,14 +352,14 @@ function Dashboard() {
               <Search className="absolute inset-y-0 start-3 my-auto w-4 h-4 text-muted-foreground" />
               <input
                 value={searchQ}
-                onChange={(e) => setSearchQ(e.target.value)}
+                onChange={(e) => { setSearchQ(e.target.value); if (e.target.value.length === 1) bumpCounter("search"); }}
                 placeholder="البحث في الدورات..."
                 className="w-full h-11 rounded-xl bg-card border border-border ps-10 pe-4 text-sm outline-none focus:border-primary transition-colors"
               />
             </div>
 
             <div className="flex items-center gap-2 ms-auto">
-              <IconBtn onClick={() => { handleSoundClick(); toggle(); }} aria-label="تبديل الوضع">
+              <IconBtn onClick={() => { handleSoundClick(); toggle(); bumpCounter("dark"); }} aria-label="تبديل الوضع">
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </IconBtn>
               <div className="relative">
