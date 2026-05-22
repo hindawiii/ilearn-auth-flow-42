@@ -10,6 +10,7 @@ import { useSound } from "@/hooks/use-sound";
 import { Confetti } from "@/components/Confetti";
 import { RippleButton } from "@/components/RippleButton";
 import { toast } from "sonner";
+import { checkAchievements, recordLessonToday } from "@/lib/achievements";
 
 export const Route = createFileRoute("/lesson/$id")({
   head: () => ({ meta: [{ title: "iLearn — درس" }] }),
@@ -80,9 +81,18 @@ function LessonPage() {
       const cur = parseInt(localStorage.getItem(XP_KEY) ?? "2450", 10);
       localStorage.setItem(XP_KEY, String(cur + 50));
     } catch { /* ignore */ }
+    recordLessonToday();
     setConfettiTick((t) => t + 1);
     play("success");
     toast.success("🎉 أحسنت! +50 XP", { description: "تم إكمال الدرس بنجاح" });
+    // Check for newly unlocked achievements
+    setTimeout(() => {
+      const newly = checkAchievements();
+      newly.forEach((a) =>
+        toast.success(`🏆 إنجاز جديد! ${a.name}`, { description: a.desc, duration: 5000 })
+      );
+      if (newly.length) setConfettiTick((t) => t + 1);
+    }, 300);
     if (next) setTimeout(() => navigate({ to: "/lesson/$id", params: { id: next.id } }), 1500);
   };
 
