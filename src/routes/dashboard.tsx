@@ -55,7 +55,7 @@ const SECTIONS_NAV = [
 const COMMUNITY_NAV = [
   { icon: MessageSquare, label: "المنتدى" },
   { icon: FileText, label: "المدونة" },
-  { icon: BarChart3, label: "المتصدرون" },
+  { icon: BarChart3, label: "المتصدرون", to: "/leaderboard" },
 ];
 
 type Stat = { key: string; label: string; value: number; change: string; up: boolean; icon: React.ComponentType<{ className?: string }>; color: string; bg: string; format?: (n: number) => string };
