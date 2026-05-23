@@ -223,8 +223,8 @@ function ProfilePage() {
                 <Card key={s.id}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <s.icon className="w-5 h-5" style={{ color: s.color }} /> {s.name}
+                      <CardTitle className="text-lg flex items-center gap-2" style={{ color: s.color }}>
+                        <s.icon className="w-5 h-5" /> <span className="text-foreground">{s.name}</span>
                       </CardTitle>
                       <span className="text-sm text-muted-foreground">{done.length}/{s.lessons.length} · {pct}%</span>
                     </div>
