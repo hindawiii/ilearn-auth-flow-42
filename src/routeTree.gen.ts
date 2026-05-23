@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AchievementsRouteImport } from './routes/achievements'
@@ -20,6 +21,11 @@ import { Route as LessonIdRouteImport } from './routes/lesson.$id'
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/achievements': typeof AchievementsRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/achievements': typeof AchievementsRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/achievements': typeof AchievementsRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/leaderboard': typeof LeaderboardRoute
   '/profile': typeof ProfileRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/auth'
     | '/dashboard'
+    | '/leaderboard'
     | '/profile'
     | '/lesson/$id'
     | '/section/$id'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/auth'
     | '/dashboard'
+    | '/leaderboard'
     | '/profile'
     | '/lesson/$id'
     | '/section/$id'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/auth'
     | '/dashboard'
+    | '/leaderboard'
     | '/profile'
     | '/lesson/$id'
     | '/section/$id'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AchievementsRoute: typeof AchievementsRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  LeaderboardRoute: typeof LeaderboardRoute
   ProfileRoute: typeof ProfileRoute
   LessonIdRoute: typeof LessonIdRoute
   SectionIdRoute: typeof SectionIdRoute
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AchievementsRoute: AchievementsRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  LeaderboardRoute: LeaderboardRoute,
   ProfileRoute: ProfileRoute,
   LessonIdRoute: LessonIdRoute,
   SectionIdRoute: SectionIdRoute,
