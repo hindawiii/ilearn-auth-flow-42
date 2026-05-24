@@ -382,12 +382,19 @@ function Dashboard() {
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </IconBtn>
               <div className="relative">
-                <IconBtn onClick={() => { handleSoundClick(); setNotifOpen((v) => !v); }} aria-label="إشعارات">
+                <Link
+                  to="/notifications"
+                  onClick={() => handleSoundClick()}
+                  aria-label="إشعارات"
+                  className="relative h-11 w-11 rounded-xl bg-card border border-border flex items-center justify-center text-foreground hover:bg-accent transition-colors"
+                >
                   <Bell className="w-4 h-4" />
-                  {notifications.length > 0 && (
-                    <span className="absolute top-2 end-2 w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                  {unreadNotif > 0 && (
+                    <span className="absolute -top-1 -end-1 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
+                      {unreadNotif > 9 ? "9+" : unreadNotif}
+                    </span>
                   )}
-                </IconBtn>
+                </Link>
                 {notifOpen && (
                   <>
                     <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} />
