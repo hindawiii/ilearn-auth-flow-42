@@ -17,6 +17,7 @@ import { LessonPlayer, type Lesson } from "@/components/LessonPlayer";
 import { toast } from "sonner";
 import { SECTIONS as SECTION_ROUTES } from "@/lib/sections-data";
 import { ACHIEVEMENTS, getEarned, getLatestEarned, bumpCounter, checkAchievements } from "@/lib/achievements";
+import { getUnreadCount, onNotificationsChange, seedNotificationsOnce, addNotification } from "@/lib/notifications";
 
 const NAME_TO_ID: Record<string, string> = SECTION_ROUTES.reduce((acc, s) => {
   acc[s.name] = s.id;
@@ -41,6 +42,7 @@ const MAIN_NAV = [
   { icon: BookOpen, label: "دوراتي", badge: "8" },
   { icon: TrendingUp, label: "تقدمي" },
   { icon: Trophy, label: "الإنجازات", to: "/achievements" },
+  { icon: Bell, label: "الإشعارات", to: "/notifications" },
 ];
 
 const SECTIONS_NAV = [
@@ -128,6 +130,15 @@ function Dashboard() {
 
   useEffect(() => { setEarnedMap(getEarned()); }, []);
 
+  // Notifications unread badge
+  const [unreadNotif, setUnreadNotif] = useState(0);
+  useEffect(() => {
+    seedNotificationsOnce();
+    setUnreadNotif(getUnreadCount());
+    const off = onNotificationsChange(() => setUnreadNotif(getUnreadCount()));
+    return off;
+  }, []);
+
   // XP from localStorage
   const [xp, setXp] = useState(2450);
   const [streak, setStreak] = useState(7);
@@ -160,6 +171,14 @@ function Dashboard() {
       setConfettiTick((t) => t + 1);
       play("success");
       newly.forEach((a) => toast.success(`🏆 إنجاز جديد! ${a.name}`, { description: a.desc }));
+      newly.forEach((a) =>
+        addNotification({
+          type: "achievement",
+          title: "تهانينا! حصلت على شارة جديدة",
+          description: `شارة: ${a.name} — ${a.desc}`,
+          link: "/achievements",
+        })
+      );
     }
     setEarnedMap(getEarned());
   }, [xp, streak, lessonsDone, play]);
@@ -363,12 +382,19 @@ function Dashboard() {
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </IconBtn>
               <div className="relative">
-                <IconBtn onClick={() => { handleSoundClick(); setNotifOpen((v) => !v); }} aria-label="إشعارات">
+                <Link
+                  to="/notifications"
+                  onClick={() => handleSoundClick()}
+                  aria-label="إشعارات"
+                  className="relative h-11 w-11 rounded-xl bg-card border border-border flex items-center justify-center text-foreground hover:bg-accent transition-colors"
+                >
                   <Bell className="w-4 h-4" />
-                  {notifications.length > 0 && (
-                    <span className="absolute top-2 end-2 w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                  {unreadNotif > 0 && (
+                    <span className="absolute -top-1 -end-1 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
+                      {unreadNotif > 9 ? "9+" : unreadNotif}
+                    </span>
                   )}
-                </IconBtn>
+                </Link>
                 {notifOpen && (
                   <>
                     <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} />
