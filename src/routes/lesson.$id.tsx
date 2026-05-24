@@ -11,6 +11,7 @@ import { Confetti } from "@/components/Confetti";
 import { RippleButton } from "@/components/RippleButton";
 import { toast } from "sonner";
 import { checkAchievements, recordLessonToday } from "@/lib/achievements";
+import { addNotification } from "@/lib/notifications";
 
 export const Route = createFileRoute("/lesson/$id")({
   head: () => ({ meta: [{ title: "iLearn — درس" }] }),
@@ -85,11 +86,25 @@ function LessonPage() {
     setConfettiTick((t) => t + 1);
     play("success");
     toast.success("🎉 أحسنت! +50 XP", { description: "تم إكمال الدرس بنجاح" });
+    addNotification({
+      type: "lesson",
+      title: "أكملت درساً بنجاح",
+      description: `درس: ${lesson.title} — +50 XP`,
+      link: `/lesson/${lesson.id}`,
+    });
     // Check for newly unlocked achievements
     setTimeout(() => {
       const newly = checkAchievements();
       newly.forEach((a) =>
         toast.success(`🏆 إنجاز جديد! ${a.name}`, { description: a.desc, duration: 5000 })
+      );
+      newly.forEach((a) =>
+        addNotification({
+          type: "achievement",
+          title: "تهانينا! حصلت على شارة جديدة",
+          description: `شارة: ${a.name} — ${a.desc}`,
+          link: "/achievements",
+        })
       );
       if (newly.length) setConfettiTick((t) => t + 1);
     }, 300);
