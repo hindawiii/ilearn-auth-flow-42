@@ -143,7 +143,7 @@ function ForumPage() {
   );
   const [query, setQuery] = useState("");
   const [showNew, setShowNew] = useState(false);
-  const [confetti, setConfetti] = useState(false);
+  const [confetti, setConfetti] = useState(0);
 
   useEffect(() => { saveTopics(topics); }, [topics]);
   useEffect(() => { saveReplies(replies); }, [replies]);
@@ -243,8 +243,7 @@ function ForumPage() {
     };
     setTopics((prev) => [t, ...prev]);
     setShowNew(false);
-    setConfetti(true);
-    setTimeout(() => setConfetti(false), 1500);
+    setConfetti((n) => n + 1);
     toast.success("تم نشر موضوعك بنجاح 🎉");
   };
 
