@@ -1,7 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import {
   ArrowRight, MessageSquare, Plus, Search, Heart, Eye, MessageCircle,
   CheckCircle2, Circle, Share2, Flag, Send, X, Laptop, Smartphone, Code2,
@@ -109,13 +107,18 @@ function loadLikes(): Record<string, boolean> {
 function saveLikes(l: Record<string, boolean>) { try { localStorage.setItem(K_LIKES, JSON.stringify(l)); } catch { /* noop */ } }
 
 // ============ ROUTE ============
-const searchSchema = z.object({
-  topic: fallback(z.number().optional(), undefined),
-  category: fallback(z.string().optional(), undefined),
-});
+type ForumSearch = { topic?: number; category?: string };
 
 export const Route = createFileRoute("/forum")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (raw: Record<string, unknown>): ForumSearch => {
+    const topicRaw = raw.topic;
+    const topic =
+      typeof topicRaw === "number" ? topicRaw :
+      typeof topicRaw === "string" && topicRaw ? Number(topicRaw) || undefined :
+      undefined;
+    const category = typeof raw.category === "string" ? raw.category : undefined;
+    return { topic, category };
+  },
   head: () => ({
     meta: [
       { title: "iLearn — منتدى المجتمع" },
@@ -402,7 +405,7 @@ function ForumPage() {
   // ====== FORUM HOME ======
   return (
     <div className="min-h-screen bg-background text-foreground" dir="rtl">
-      {confetti && <Confetti />}
+      <Confetti trigger={confetti} />
       <div className="mx-auto max-w-7xl px-4 py-8 animate-fade-in">
         {/* Back */}
         <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
