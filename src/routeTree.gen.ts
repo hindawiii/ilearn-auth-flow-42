@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as ForumRouteImport } from './routes/forum'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AchievementsRouteImport } from './routes/achievements'
@@ -32,6 +33,11 @@ const NotificationsRoute = NotificationsRouteImport.update({
 const LeaderboardRoute = LeaderboardRouteImport.update({
   id: '/leaderboard',
   path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForumRoute = ForumRouteImport.update({
+  id: '/forum',
+  path: '/forum',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/achievements': typeof AchievementsRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/achievements': typeof AchievementsRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/achievements': typeof AchievementsRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRoute
+  '/forum': typeof ForumRoute
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/auth'
     | '/dashboard'
+    | '/forum'
     | '/leaderboard'
     | '/notifications'
     | '/profile'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/auth'
     | '/dashboard'
+    | '/forum'
     | '/leaderboard'
     | '/notifications'
     | '/profile'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/achievements'
     | '/auth'
     | '/dashboard'
+    | '/forum'
     | '/leaderboard'
     | '/notifications'
     | '/profile'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   AchievementsRoute: typeof AchievementsRoute
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRoute
+  ForumRoute: typeof ForumRoute
   LeaderboardRoute: typeof LeaderboardRoute
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
@@ -168,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/leaderboard'
       fullPath: '/leaderboard'
       preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forum': {
+      id: '/forum'
+      path: '/forum'
+      fullPath: '/forum'
+      preLoaderRoute: typeof ForumRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -220,6 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   AchievementsRoute: AchievementsRoute,
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRoute,
+  ForumRoute: ForumRoute,
   LeaderboardRoute: LeaderboardRoute,
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
