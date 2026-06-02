@@ -55,7 +55,7 @@ const SECTIONS_NAV = [
 ];
 
 const COMMUNITY_NAV = [
-  { icon: MessageSquare, label: "المنتدى" },
+  { icon: MessageSquare, label: "المنتدى", to: "/forum" },
   { icon: FileText, label: "المدونة" },
   { icon: BarChart3, label: "المتصدرون", to: "/leaderboard" },
 ];
