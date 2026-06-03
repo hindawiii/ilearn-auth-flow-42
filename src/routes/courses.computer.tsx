@@ -435,7 +435,7 @@ function LessonView({ lesson, done, onComplete }: { lesson: CLesson; done: Set<n
     addNotification({
       type: "lesson",
       title: "أكملت درساً جديداً",
-      body: lesson.title,
+      description: lesson.title,
       icon: "🎓",
       link: `/courses/computer?lesson=${lesson.id}`,
     });
@@ -443,7 +443,7 @@ function LessonView({ lesson, done, onComplete }: { lesson: CLesson; done: Set<n
       const newly = checkAchievements();
       newly.forEach((a) => {
         toast.success(`🏆 شارة جديدة: ${a.name}`, { description: a.desc });
-        addNotification({ type: "achievement", title: "حصلت على شارة!", body: a.name, icon: a.emoji, link: "/achievements" });
+        addNotification({ type: "achievement", title: "حصلت على شارة!", description: a.name, icon: a.emoji, link: "/achievements" });
       });
     } catch {}
     onComplete();
