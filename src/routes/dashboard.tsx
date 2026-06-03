@@ -46,7 +46,7 @@ const MAIN_NAV = [
 ];
 
 const SECTIONS_NAV = [
-  { icon: Monitor, label: "الحاسوب", progress: 45 },
+  { icon: Monitor, label: "الحاسوب", progress: 45, to: "/courses/computer" },
   { icon: Smartphone, label: "الهواتف", progress: 20 },
   { icon: Code2, label: "البرمجة", progress: 60 },
   { icon: Camera, label: "التصوير", progress: 10 },
