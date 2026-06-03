@@ -19,7 +19,6 @@ import { Route as AchievementsRouteImport } from './routes/achievements'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SectionIdRouteImport } from './routes/section.$id'
 import { Route as LessonIdRouteImport } from './routes/lesson.$id'
-import { Route as CoursesComputerRouteImport } from './routes/courses.computer'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -71,11 +70,6 @@ const LessonIdRoute = LessonIdRouteImport.update({
   path: '/lesson/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CoursesComputerRoute = CoursesComputerRouteImport.update({
-  id: '/courses/computer',
-  path: '/courses/computer',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -86,7 +80,6 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
-  '/courses/computer': typeof CoursesComputerRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
 }
@@ -99,7 +92,6 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
-  '/courses/computer': typeof CoursesComputerRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
 }
@@ -113,7 +105,6 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
-  '/courses/computer': typeof CoursesComputerRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
 }
@@ -128,7 +119,6 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
-    | '/courses/computer'
     | '/lesson/$id'
     | '/section/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -141,7 +131,6 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
-    | '/courses/computer'
     | '/lesson/$id'
     | '/section/$id'
   id:
@@ -154,7 +143,6 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
-    | '/courses/computer'
     | '/lesson/$id'
     | '/section/$id'
   fileRoutesById: FileRoutesById
@@ -168,7 +156,6 @@ export interface RootRouteChildren {
   LeaderboardRoute: typeof LeaderboardRoute
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
-  CoursesComputerRoute: typeof CoursesComputerRoute
   LessonIdRoute: typeof LessonIdRoute
   SectionIdRoute: typeof SectionIdRoute
 }
@@ -245,13 +232,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LessonIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/courses/computer': {
-      id: '/courses/computer'
-      path: '/courses/computer'
-      fullPath: '/courses/computer'
-      preLoaderRoute: typeof CoursesComputerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -264,7 +244,6 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardRoute: LeaderboardRoute,
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
-  CoursesComputerRoute: CoursesComputerRoute,
   LessonIdRoute: LessonIdRoute,
   SectionIdRoute: SectionIdRoute,
 }
