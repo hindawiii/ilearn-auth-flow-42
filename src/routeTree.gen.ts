@@ -94,7 +94,6 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/courses/computer': typeof CoursesComputerRoute
   '/courses/phones': typeof CoursesPhonesRoute
-  '/courses/phones': typeof CoursesPhonesRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
 }
@@ -108,7 +107,6 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/courses/computer': typeof CoursesComputerRoute
-  '/courses/phones': typeof CoursesPhonesRoute
   '/courses/phones': typeof CoursesPhonesRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
@@ -124,7 +122,6 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
   '/courses/computer': typeof CoursesComputerRoute
-  '/courses/phones': typeof CoursesPhonesRoute
   '/courses/phones': typeof CoursesPhonesRoute
   '/lesson/$id': typeof LessonIdRoute
   '/section/$id': typeof SectionIdRoute
