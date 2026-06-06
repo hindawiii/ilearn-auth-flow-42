@@ -21,6 +21,7 @@ import { Route as SectionIdRouteImport } from './routes/section.$id'
 import { Route as LessonIdRouteImport } from './routes/lesson.$id'
 import { Route as CoursesPhonesRouteImport } from './routes/courses.phones'
 import { Route as CoursesComputerRouteImport } from './routes/courses.computer'
+import { Route as CoursesPhonesRouteImport } from './routes/courses.phones'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -80,6 +81,11 @@ const CoursesPhonesRoute = CoursesPhonesRouteImport.update({
 const CoursesComputerRoute = CoursesComputerRouteImport.update({
   id: '/courses/computer',
   path: '/courses/computer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoursesPhonesRoute = CoursesPhonesRouteImport.update({
+  id: '/courses/phones',
+  path: '/courses/phones',
   getParentRoute: () => rootRouteImport,
 } as any)
 
