@@ -48,7 +48,7 @@ const MAIN_NAV = [
 const SECTIONS_NAV = [
   { icon: Monitor, label: "الحاسوب", progress: 45 },
   { icon: Smartphone, label: "الهواتف", progress: 20, to: "/courses/phones" },
-  { icon: Code2, label: "البرمجة", progress: 60 },
+  { icon: Code2, label: "البرمجة", progress: 60, to: "/courses/programming" },
   { icon: Camera, label: "التصوير", progress: 10 },
   { icon: Brain, label: "الذكاء الاصطناعي", tag: "جديد" },
   { icon: Wrench, label: "الصيانة", tag: "قريباً", disabled: true },
