@@ -22,6 +22,7 @@ import { Route as LessonIdRouteImport } from './routes/lesson.$id'
 import { Route as CoursesProgrammingRouteImport } from './routes/courses.programming'
 import { Route as CoursesPhonesRouteImport } from './routes/courses.phones'
 import { Route as CoursesComputerRouteImport } from './routes/courses.computer'
+import { Route as CoursesCamerasRouteImport } from './routes/courses.cameras'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -88,6 +89,11 @@ const CoursesComputerRoute = CoursesComputerRouteImport.update({
   path: '/courses/computer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CoursesCamerasRoute = CoursesCamerasRouteImport.update({
+  id: '/courses/cameras',
+  path: '/courses/cameras',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/courses/cameras': typeof CoursesCamerasRoute
   '/courses/computer': typeof CoursesComputerRoute
   '/courses/phones': typeof CoursesPhonesRoute
   '/courses/programming': typeof CoursesProgrammingRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/courses/cameras': typeof CoursesCamerasRoute
   '/courses/computer': typeof CoursesComputerRoute
   '/courses/phones': typeof CoursesPhonesRoute
   '/courses/programming': typeof CoursesProgrammingRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/notifications': typeof NotificationsRoute
   '/profile': typeof ProfileRoute
+  '/courses/cameras': typeof CoursesCamerasRoute
   '/courses/computer': typeof CoursesComputerRoute
   '/courses/phones': typeof CoursesPhonesRoute
   '/courses/programming': typeof CoursesProgrammingRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
+    | '/courses/cameras'
     | '/courses/computer'
     | '/courses/phones'
     | '/courses/programming'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
+    | '/courses/cameras'
     | '/courses/computer'
     | '/courses/phones'
     | '/courses/programming'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/notifications'
     | '/profile'
+    | '/courses/cameras'
     | '/courses/computer'
     | '/courses/phones'
     | '/courses/programming'
@@ -192,6 +204,7 @@ export interface RootRouteChildren {
   LeaderboardRoute: typeof LeaderboardRoute
   NotificationsRoute: typeof NotificationsRoute
   ProfileRoute: typeof ProfileRoute
+  CoursesCamerasRoute: typeof CoursesCamerasRoute
   CoursesComputerRoute: typeof CoursesComputerRoute
   CoursesPhonesRoute: typeof CoursesPhonesRoute
   CoursesProgrammingRoute: typeof CoursesProgrammingRoute
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesComputerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/courses/cameras': {
+      id: '/courses/cameras'
+      path: '/courses/cameras'
+      fullPath: '/courses/cameras'
+      preLoaderRoute: typeof CoursesCamerasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -304,6 +324,7 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardRoute: LeaderboardRoute,
   NotificationsRoute: NotificationsRoute,
   ProfileRoute: ProfileRoute,
+  CoursesCamerasRoute: CoursesCamerasRoute,
   CoursesComputerRoute: CoursesComputerRoute,
   CoursesPhonesRoute: CoursesPhonesRoute,
   CoursesProgrammingRoute: CoursesProgrammingRoute,
