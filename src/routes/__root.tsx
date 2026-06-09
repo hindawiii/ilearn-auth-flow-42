@@ -72,13 +72,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "iLearn — منصة التعلم التفاعلية" },
-      { name: "description", content: "iLearn — تعلّم بأسلوب ممتع وتفاعلي" },
-      { property: "og:title", content: "iLearn" },
-      { property: "og:description", content: "منصة تعليمية تفاعلية" },
+      { title: "iLearnin — منصة التعلم التفاعلية" },
+      { name: "description", content: "iLearnin — تعلّم معنا بأسلوب ممتع وتفاعلي.. ذكي" },
+      { property: "og:title", content: "iLearnin — منصة التعلم التفاعلية" },
+      { property: "og:description", content: "iLearnin — تعلّم معنا بأسلوب ممتع وتفاعلي.. ذكي" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "iLearnin — منصة التعلم التفاعلية" },
+      { name: "twitter:description", content: "iLearnin — تعلّم معنا بأسلوب ممتع وتفاعلي.. ذكي" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ac2c8e09-cc2a-4696-99aa-e1b7782daa7e/id-preview-acdc892f--5cb1509f-03d7-4350-b300-5e2b3e89e428.lovable.app-1780904223737.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ac2c8e09-cc2a-4696-99aa-e1b7782daa7e/id-preview-acdc892f--5cb1509f-03d7-4350-b300-5e2b3e89e428.lovable.app-1780904223737.png" },
     ],
     links: [
       {
